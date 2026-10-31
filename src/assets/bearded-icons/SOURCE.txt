@@ -1,0 +1,2 @@
+Bearded Icons 1.22.0 by BeardedBear (https://github.com/BeardedBear/bearded-icons), GPL-3.0.
+Copied from the VS Code extension beardedbear.beardedicons-1.22.0: icons/ and icons.json are unmodified.
