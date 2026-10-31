@@ -24,9 +24,9 @@ It is built with [Tauri 2](https://tauri.app): a Rust backend for the connection
 
 ## Install
 
-Download `Dispatch-SFTP_<version>_aarch64.app.zip` from [Releases](../../releases), unzip it and move `Dispatch SFTP.app` to `/Applications`. The release build is for Apple Silicon Macs and needs macOS 11 or later.
+Download `Dispatch-SFTP_<version>_aarch64.dmg` from [Releases](../../releases), open it, and drag `Dispatch SFTP` into the Applications folder. The build is for Apple Silicon Macs and needs macOS 11 or later. A `.app.zip` is attached too, if you prefer that.
 
-The app is not signed or notarized, so macOS blocks it on first launch. Remove the quarantine flag once:
+The app is not signed with an Apple Developer certificate or notarized, so the first time you open it macOS says it cannot be verified. Either right-click the app and choose Open, then confirm once, or run:
 
 ```sh
 xattr -dr com.apple.quarantine "/Applications/Dispatch SFTP.app"
