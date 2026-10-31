@@ -78,6 +78,8 @@ interface ConnectOptions {
 }
 
 const PANEL_KEY = "dispatch.panel";
+
+type ImportSource = "filezilla" | "cyberduck";
 const THEME_KEY = "dispatch.theme";
 const ICON_SET_KEY = "dispatch.iconSet";
 
@@ -341,29 +343,42 @@ export default function App() {
   const folders = useMemo(() => [...new Set(sites.map((s) => s.folder).filter(Boolean))].sort(), [sites]);
   const selectedSite = sites.find((s) => s.id === selectedSiteId) ?? null;
 
-  const importFromFileZilla = useCallback(async () => {
-    const run = async (path?: string) => {
-      const report = await api.importFilezilla(path);
-      await refreshSites();
-      setDialog({ type: "import", report });
-    };
-    try {
-      await run();
-    } catch (e) {
-      const err = toAppError(e);
-      if (err.code !== "not_found") {
-        toast("error", err.message);
-        return;
+  // Imports from the other app's usual location, or asks for the files when they are not there.
+  const importSites = useCallback(
+    async (source: ImportSource) => {
+      const run = async (paths?: string[]) => {
+        const report = source === "filezilla" ? await api.importFilezilla(paths?.[0]) : await api.importCyberduck(paths);
+        await refreshSites();
+        setDialog({ type: "import", report });
+      };
+      try {
+        await run();
+      } catch (e) {
+        const err = toAppError(e);
+        if (err.code !== "not_found") {
+          toast("error", err.message);
+          return;
+        }
+        const picked =
+          source === "filezilla"
+            ? await openFileDialog({
+                title: "Choose FileZilla's sitemanager.xml or an exported sites file",
+                multiple: false,
+                directory: false,
+                filters: [{ name: "FileZilla sites", extensions: ["xml"] }],
+              })
+            : await openFileDialog({
+                title: "Choose Cyberduck bookmarks (.duck files)",
+                multiple: true,
+                directory: false,
+                filters: [{ name: "Cyberduck bookmarks", extensions: ["duck"] }],
+              });
+        const paths = picked === null ? [] : Array.isArray(picked) ? picked : [picked];
+        if (paths.length) await run(paths).catch((err2) => toast("error", toAppError(err2).message));
       }
-      const file = await openFileDialog({
-        title: "Choose FileZilla's sitemanager.xml or an exported sites file",
-        multiple: false,
-        directory: false,
-        filters: [{ name: "FileZilla sites", extensions: ["xml"] }],
-      });
-      if (typeof file === "string") await run(file).catch((err2) => toast("error", toAppError(err2).message));
-    }
-  }, [refreshSites, toast]);
+    },
+    [refreshSites, toast],
+  );
 
   const saveSite = async (site: Site, secrets: { password?: string; passphrase?: string }, connect: boolean) => {
     try {
@@ -796,10 +811,13 @@ export default function App() {
       <h3>No server connected</h3>
       {sites.length === 0 ? (
         <>
-          <p className="muted">Bring over your saved sites from FileZilla, or add one.</p>
+          <p className="muted">Bring over your saved sites from FileZilla or Cyberduck, or add one.</p>
           <div className="placeholder-actions">
-            <button type="button" className="button primary" onClick={() => void importFromFileZilla()}>
+            <button type="button" className="button primary" onClick={() => void importSites("filezilla")}>
               <FileInput size={14} /> Import from FileZilla
+            </button>
+            <button type="button" className="button" onClick={() => void importSites("cyberduck")}>
+              <FileInput size={14} /> Import from Cyberduck
             </button>
             <button type="button" className="button" onClick={() => setDialog({ type: "site", site: emptySite() })}>
               <Plus size={14} /> New site
@@ -837,7 +855,7 @@ export default function App() {
             onSelect={setSelectedSiteId}
             onConnect={(site) => void connectTo(site)}
             onNew={() => setDialog({ type: "site", site: emptySite() })}
-            onImport={() => void importFromFileZilla()}
+            onImport={(source) => void importSites(source)}
             onContextMenu={siteMenu}
             onListContextMenu={(e) =>
               setMenu({
@@ -845,7 +863,8 @@ export default function App() {
                 y: e.clientY,
                 items: [
                   { label: "New site", icon: <Plus size={14} />, onSelect: () => setDialog({ type: "site", site: emptySite() }) },
-                  { label: "Import from FileZilla", icon: <FileInput size={14} />, onSelect: () => void importFromFileZilla() },
+                  { label: "Import from FileZilla", icon: <FileInput size={14} />, onSelect: () => void importSites("filezilla") },
+                    { label: "Import from Cyberduck", icon: <FileInput size={14} />, onSelect: () => void importSites("cyberduck") },
                 ],
               })
             }

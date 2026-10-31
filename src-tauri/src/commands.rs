@@ -7,7 +7,9 @@ use serde::{Deserialize, Serialize};
 use tauri::State;
 
 use crate::error::{AppError, AppResult};
-use crate::filezilla::{self, ImportReport};
+use crate::import::cyberduck::{self, Bookmark};
+use crate::import::filezilla;
+use crate::import::{ImportReport, ImportedSite};
 use crate::local;
 use crate::remote::{join, Conn, ConnectParams, Ctx, Entry};
 use crate::sites::{secret_delete, secret_get, secret_set, AuthMethod, Protocol, Secret, Site, SiteStore};
@@ -144,19 +146,19 @@ pub fn filezilla_path() -> Option<String> {
     filezilla::default_path().map(|p| p.to_string_lossy().into_owned())
 }
 
-#[tauri::command]
-pub async fn import_filezilla(state: State<'_, AppState>, path: Option<String>) -> AppResult<ImportReport> {
-    let path = match path {
-        Some(p) => PathBuf::from(p),
-        None => filezilla::default_path()
-            .ok_or_else(|| AppError::new("not_found", "FileZilla's Site Manager file was not found on this Mac"))?,
-    };
-    let xml = std::fs::read_to_string(&path).map_err(|e| AppError::other(format!("{}: {e}", path.display())))?;
-    let (found, unsupported) = filezilla::parse(&xml)?;
-
+/// Adds imported sites, skipping ones that are already saved, and saves readable
+/// passwords in the Keychain.
+fn add_imported(
+    state: &AppState,
+    source: &'static str,
+    path: String,
+    found: Vec<ImportedSite>,
+    unsupported: Vec<String>,
+) -> AppResult<ImportReport> {
     let existing = state.sites.list();
     let mut report = ImportReport {
-        path: path.to_string_lossy().into_owned(),
+        source,
+        path,
         found: found.len() + unsupported.len(),
         unsupported,
         ..Default::default()
@@ -172,15 +174,53 @@ pub async fn import_filezilla(state: State<'_, AppState>, path: Option<String>) 
         if let Some(password) = item.password {
             site.password_saved = secret_set(Secret::SitePassword(&site.id), &password).is_ok();
         }
-        if item.password_encrypted {
+        if item.needs_password {
             report.need_password.push(site.name.clone());
         }
         new_sites.push(site);
     }
     report.imported = new_sites.len();
     state.sites.add_many(new_sites)?;
-    state.ctx.log.info(format!("Imported {} sites from {}", report.imported, report.path));
+    state.ctx.log.info(format!("Imported {} sites from {source} ({})", report.imported, report.path));
     Ok(report)
+}
+
+#[tauri::command]
+pub async fn import_filezilla(state: State<'_, AppState>, path: Option<String>) -> AppResult<ImportReport> {
+    let path = match path {
+        Some(p) => PathBuf::from(p),
+        None => filezilla::default_path()
+            .ok_or_else(|| AppError::new("not_found", "FileZilla's Site Manager file was not found on this Mac"))?,
+    };
+    let xml = std::fs::read_to_string(&path).map_err(|e| AppError::other(format!("{}: {e}", path.display())))?;
+    let (found, unsupported) = filezilla::parse(&xml)?;
+    add_imported(&state, "FileZilla", path.to_string_lossy().into_owned(), found, unsupported)
+}
+
+/// Imports Cyberduck bookmarks from its bookmark folders, or from the given
+/// .duck files and folders (bookmarks dragged out of Cyberduck).
+#[tauri::command]
+pub async fn import_cyberduck(state: State<'_, AppState>, paths: Option<Vec<String>>) -> AppResult<ImportReport> {
+    let sources: Vec<PathBuf> = match paths {
+        Some(paths) => paths.into_iter().map(PathBuf::from).collect(),
+        None => cyberduck::default_dirs(),
+    };
+    let files = cyberduck::bookmark_files(&sources);
+    if files.is_empty() {
+        return Err(AppError::new("not_found", "No Cyberduck bookmarks were found on this Mac"));
+    }
+    let mut found = Vec::new();
+    let mut unsupported = Vec::new();
+    for file in &files {
+        let parsed = std::fs::read(file).map_err(AppError::from).and_then(|bytes| cyberduck::parse(&bytes));
+        match parsed {
+            Ok(Bookmark::Site(item)) => found.push(item),
+            Ok(Bookmark::Unsupported(name)) => unsupported.push(name),
+            Err(e) => state.ctx.log.warn(format!("Skipped {}: {}", file.display(), e.message)),
+        }
+    }
+    let path = sources.iter().map(|p| p.display().to_string()).collect::<Vec<_>>().join(", ");
+    add_imported(&state, "Cyberduck", path, found, unsupported)
 }
 
 // ---- Connections ----

@@ -30,7 +30,7 @@ interface SidebarProps {
   onSelect: (id: string) => void;
   onConnect: (site: Site) => void;
   onNew: () => void;
-  onImport: () => void;
+  onImport: (source: "filezilla" | "cyberduck") => void;
   onContextMenu: (e: ReactMouseEvent, site: Site) => void;
   /** Right-click on the empty part of the site list. */
   onListContextMenu: (e: ReactMouseEvent) => void;
@@ -127,8 +127,11 @@ export const Sidebar = forwardRef<HTMLInputElement, SidebarProps>(function Sideb
           <div className="sidebar-empty">
             <Server size={28} strokeWidth={1.5} />
             <p>No saved sites yet.</p>
-            <button type="button" className="button primary" onClick={props.onImport}>
+            <button type="button" className="button primary" onClick={() => props.onImport("filezilla")}>
               <FileInput size={14} /> Import from FileZilla
+            </button>
+            <button type="button" className="button" onClick={() => props.onImport("cyberduck")}>
+              <FileInput size={14} /> Import from Cyberduck
             </button>
             <button type="button" className="button" onClick={props.onNew}>
               <Plus size={14} /> New site

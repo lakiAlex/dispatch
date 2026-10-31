@@ -233,7 +233,7 @@ export function ChmodDialog(props: {
 export function ImportReportDialog({ report, onClose }: { report: ImportReport; onClose: () => void }) {
   return (
     <Dialog
-      title="Imported from FileZilla"
+      title={`Imported from ${report.source}`}
       icon={<CircleCheck size={18} />}
       width={480}
       onClose={onClose}
@@ -262,11 +262,17 @@ export function ImportReportDialog({ report, onClose }: { report: ImportReport; 
           </li>
         )}
       </ul>
-      {report.needPassword.length > 0 && (
+      {report.needPassword.length > 0 && report.source === "FileZilla" && (
         <p className="dialog-message">
           {report.needPassword.length === 1 ? "One site has" : `${report.needPassword.length} sites have`} a password protected by
           FileZilla's master password, which Dispatch cannot read. Dispatch asks for the password on the first connect and can save it
           in the Keychain: {report.needPassword.join(", ")}.
+        </p>
+      )}
+      {report.needPassword.length > 0 && report.source === "Cyberduck" && (
+        <p className="dialog-message">
+          Cyberduck keeps passwords in the Keychain, not in its bookmarks, so they were not imported. Dispatch asks for the password on
+          the first connect and can save it in the Keychain: {report.needPassword.join(", ")}.
         </p>
       )}
       <p className="dialog-note">Source: {report.path}</p>

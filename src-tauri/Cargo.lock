@@ -1137,6 +1137,7 @@ dependencies = [
  "chrono",
  "dirs",
  "keyring",
+ "plist",
  "roxmltree",
  "russh",
  "russh-sftp",

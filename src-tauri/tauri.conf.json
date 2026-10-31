@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Dispatch",
+  "productName": "Dispatch SFTP",
   "version": "1.0.0",
   "identifier": "com.laki.dispatch",
   "build": {

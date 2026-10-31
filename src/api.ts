@@ -78,6 +78,7 @@ export interface JobProgress {
 }
 
 export interface ImportReport {
+  source: "FileZilla" | "Cyberduck";
   path: string;
   found: number;
   imported: number;
@@ -145,6 +146,7 @@ export const api = {
   deleteSite: (id: string) => invoke<void>("delete_site", { id }),
   filezillaPath: () => invoke<string | null>("filezilla_path"),
   importFilezilla: (path?: string) => invoke<ImportReport>("import_filezilla", { path }),
+  importCyberduck: (paths?: string[]) => invoke<ImportReport>("import_cyberduck", { paths }),
 
   connect: (site: Site, opts: { password?: string; passphrase?: string; remember?: boolean } = {}) =>
     invoke<SessionInfo>("connect", {

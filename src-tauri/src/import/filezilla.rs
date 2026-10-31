@@ -4,32 +4,9 @@ use std::path::PathBuf;
 
 use base64::Engine;
 use roxmltree::Node;
-use serde::Serialize;
-
+use super::ImportedSite;
 use crate::error::{AppError, AppResult};
 use crate::sites::{AuthMethod, Protocol, Site};
-
-pub struct ImportedSite {
-    pub site: Site,
-    /// Password stored in plain or base64 form. Passwords encrypted with a
-    /// FileZilla master password cannot be read and are left out.
-    pub password: Option<String>,
-    pub password_encrypted: bool,
-}
-
-#[derive(Debug, Default, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ImportReport {
-    pub path: String,
-    pub found: usize,
-    pub imported: usize,
-    pub already_present: usize,
-    /// Sites using a protocol Dispatch does not support (S3, WebDAV, ...).
-    pub unsupported: Vec<String>,
-    /// Imported sites whose password was encrypted with a FileZilla master
-    /// password. Dispatch asks for it on the first connect.
-    pub need_password: Vec<String>,
-}
 
 /// Where FileZilla keeps its Site Manager on this machine.
 pub fn default_path() -> Option<PathBuf> {
@@ -183,7 +160,8 @@ fn parse_server(node: Node, folder: &str, unsupported: &mut Vec<String>) -> Opti
         notes: child_text(node, "Comments"),
         ..Default::default()
     };
-    Some(ImportedSite { site, password, password_encrypted })
+    // A password encrypted with a FileZilla master password cannot be read.
+    Some(ImportedSite { site, password, needs_password: password_encrypted })
 }
 
 fn walk(node: Node, folder: &str, out: &mut Vec<ImportedSite>, unsupported: &mut Vec<String>) {
@@ -267,6 +245,6 @@ mod tests {
         let locked = &sites[2];
         assert_eq!(locked.site.port, 21);
         assert!(locked.password.is_none());
-        assert!(locked.password_encrypted);
+        assert!(locked.needs_password);
     }
 }

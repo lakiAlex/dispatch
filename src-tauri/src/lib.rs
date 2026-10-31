@@ -1,6 +1,6 @@
 mod commands;
 mod error;
-mod filezilla;
+mod import;
 mod known_hosts;
 mod local;
 mod log;
@@ -52,6 +52,7 @@ pub fn run() {
             commands::delete_site,
             commands::filezilla_path,
             commands::import_filezilla,
+            commands::import_cyberduck,
             commands::connect,
             commands::cancel_connect,
             commands::disconnect,

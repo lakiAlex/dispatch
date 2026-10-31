@@ -1,6 +1,6 @@
 # Dispatch
 
-Dispatch is an open source SFTP and FTP client for macOS, with a local and a remote file pane side by side, a transfer queue, and one-click import of saved sites from FileZilla.
+Dispatch is an open source SFTP and FTP client for macOS, with a local and a remote file pane side by side, a transfer queue, and one-click import of saved sites from FileZilla and Cyberduck.
 
 ![Dispatch connected to a server, with the local and remote panes and the transfer queue](docs/screenshot.png)
 
@@ -11,6 +11,7 @@ It is built with [Tauri 2](https://tauri.app): a Rust backend for the connection
 - **Protocols:** SFTP, FTP (with TLS when the server supports it), FTPES (explicit TLS), FTPS (implicit TLS) and plain FTP.
 - **SFTP login:** password, key file (OpenSSH or PuTTY `.ppk`, with or without a passphrase), ssh-agent, and keyboard-interactive for servers that only allow that.
 - **FileZilla import:** reads FileZilla's Site Manager (`~/.config/filezilla/sitemanager.xml`, or a file exported from FileZilla) and keeps folders, colors, remote folders, key files and saved passwords. Passwords protected by a FileZilla master password cannot be read; Dispatch asks for them on the first connect.
+- **Cyberduck import:** reads Cyberduck's bookmarks (or `.duck` files dragged out of Cyberduck) and keeps names, hosts, ports, usernames, remote and download folders, key files, and the first label as the group. Cyberduck keeps passwords in the Keychain, not in its bookmarks, so Dispatch asks for each password on the first connect.
 - **Keychain:** passwords and key passphrases are stored in the macOS Keychain, not in plain text. A key passphrase is stored once per key file and used by every site with that key.
 - **File panes:** sorting, filtering, breadcrumbs, back and forward, hidden files on or off, keyboard navigation and type-to-select.
 - **Drag and drop:** between the two panes, from Finder onto the remote pane, and onto folders within a pane to move files.
@@ -23,12 +24,12 @@ It is built with [Tauri 2](https://tauri.app): a Rust backend for the connection
 
 ## Install
 
-Download `Dispatch_<version>_aarch64.app.zip` from [Releases](../../releases), unzip it and move `Dispatch.app` to `/Applications`. The release build is for Apple Silicon Macs and needs macOS 11 or later.
+Download `Dispatch-SFTP_<version>_aarch64.app.zip` from [Releases](../../releases), unzip it and move `Dispatch SFTP.app` to `/Applications`. The release build is for Apple Silicon Macs and needs macOS 11 or later.
 
 The app is not signed or notarized, so macOS blocks it on first launch. Remove the quarantine flag once:
 
 ```sh
-xattr -dr com.apple.quarantine /Applications/Dispatch.app
+xattr -dr com.apple.quarantine "/Applications/Dispatch SFTP.app"
 ```
 
 ## Build from source
@@ -38,7 +39,7 @@ Requirements: [Rust](https://rustup.rs) (stable), Node.js 20 or later, and [pnpm
 ```sh
 pnpm install
 pnpm tauri dev                  # run in development mode
-pnpm tauri build --bundles app  # build src-tauri/target/release/bundle/macos/Dispatch.app
+pnpm tauri build --bundles app  # build src-tauri/target/release/bundle/macos/Dispatch SFTP.app
 ```
 
 ## Tests
@@ -56,7 +57,7 @@ cargo test
 | --- | --- |
 | `src-tauri/src/remote/` | FTP (`suppaftp`) and SFTP (`russh`) connections |
 | `src-tauri/src/transfer.rs` | Transfer queue and workers |
-| `src-tauri/src/filezilla.rs` | FileZilla Site Manager import |
+| `src-tauri/src/import/` | FileZilla and Cyberduck import |
 | `src-tauri/src/commands.rs` | Commands called by the frontend |
 | `src/components/` | Interface |
 | `src/icons/` | File icon sets |

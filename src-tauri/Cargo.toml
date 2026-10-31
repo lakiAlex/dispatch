@@ -8,6 +8,11 @@ edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# The program file is named like the app, so the Dock shows "Dispatch" in development too.
+[[bin]]
+name = "Dispatch"
+path = "src/main.rs"
+
 [lib]
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
@@ -36,6 +41,7 @@ uuid = { version = "1.29.0", features = ["v4"] }
 tauri-plugin-dialog = "2.8.4"
 roxmltree = "0.21.2"
 base64 = "0.23.1"
+plist = "1.10.3"
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
