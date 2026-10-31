@@ -127,7 +127,7 @@ export const Sidebar = forwardRef<HTMLInputElement, SidebarProps>(function Sideb
           <div className="sidebar-empty">
             <Server size={28} strokeWidth={1.5} />
             <p>No saved sites yet.</p>
-            <button type="button" className="button primary" onClick={() => props.onImport("filezilla")}>
+            <button type="button" className="button" onClick={() => props.onImport("filezilla")}>
               <FileInput size={14} /> Import from FileZilla
             </button>
             <button type="button" className="button" onClick={() => props.onImport("cyberduck")}>

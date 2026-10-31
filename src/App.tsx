@@ -813,7 +813,7 @@ export default function App() {
         <>
           <p className="muted">Bring over your saved sites from FileZilla or Cyberduck, or add one.</p>
           <div className="placeholder-actions">
-            <button type="button" className="button primary" onClick={() => void importSites("filezilla")}>
+            <button type="button" className="button" onClick={() => void importSites("filezilla")}>
               <FileInput size={14} /> Import from FileZilla
             </button>
             <button type="button" className="button" onClick={() => void importSites("cyberduck")}>
