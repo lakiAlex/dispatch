@@ -29,6 +29,8 @@ export function usePane(lister: ((path: string) => Promise<Entry[]>) | null): Pa
   const request = useRef(0);
   const pathRef = useRef("");
 
+  // Resolves to false only when the folder could not be opened. A load that a
+  // newer one replaced resolves to true, so callers do not fall back to another folder.
   const load = useCallback(
     async (target: string): Promise<boolean> => {
       if (!lister) return false;
@@ -36,7 +38,7 @@ export function usePane(lister: ((path: string) => Promise<Entry[]>) | null): Pa
       setLoading(true);
       try {
         const list = await lister(target);
-        if (id !== request.current) return false;
+        if (id !== request.current) return true;
         setEntries(list);
         setPath(target);
         pathRef.current = target;
@@ -44,7 +46,8 @@ export function usePane(lister: ((path: string) => Promise<Entry[]>) | null): Pa
         setVersion((v) => v + 1);
         return true;
       } catch (e) {
-        if (id === request.current) setError(toAppError(e).message);
+        if (id !== request.current) return true;
+        setError(toAppError(e).message);
         return false;
       } finally {
         if (id === request.current) setLoading(false);
