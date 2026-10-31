@@ -8,12 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@fontsource-variable/geist':
-        specifier: ^5.3.0
-        version: 5.3.0
-      '@fontsource-variable/geist-mono':
-        specifier: ^5.3.0
-        version: 5.3.0
       '@iconify-json/vscode-icons':
         specifier: ^1.2.95
         version: 1.2.95
@@ -62,12 +56,6 @@ importers:
         version: 8.3.5
 
 packages:
-
-  '@fontsource-variable/geist-mono@5.3.0':
-    resolution: {integrity: sha512-vBbuwDEo9AkrqADMXOrlAR3DFcJi4/JxeuU43FoiQERnNwsfXNnvxvReZG02cQKmyk4DZkZdBZX3oTDvy2zBAw==}
-
-  '@fontsource-variable/geist@5.3.0':
-    resolution: {integrity: sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==}
 
   '@iconify-json/vscode-icons@1.2.95':
     resolution: {integrity: sha512-/MUe/hDExxplspZAD+dag8Iiop8lvooSCflAiqzZHrMals+lfmj9jTfE6WfqSEq0MUi7SyKcWBAtmogb+5RqJA==}
@@ -478,10 +466,6 @@ packages:
     resolution: {integrity: sha512-rht18IFYv117UlqBn6o9j258SOtwhDBmtVrGwdoLPpSj6Z5LKQIzarQDd/tCRWneU68KEX25+nsh48tAoknKNw==}
 
 snapshots:
-
-  '@fontsource-variable/geist-mono@5.3.0': {}
-
-  '@fontsource-variable/geist@5.3.0': {}
 
   '@iconify-json/vscode-icons@1.2.95':
     dependencies:

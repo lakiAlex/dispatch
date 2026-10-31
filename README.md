@@ -4,7 +4,7 @@ Dispatch is an open source SFTP and FTP client for macOS, with a local and a rem
 
 ![Dispatch connected to a server, with the local and remote panes and the transfer queue](docs/screenshot.png)
 
-It is built with [Tauri 2](https://tauri.app): a Rust backend for the connections and transfers, and a React frontend for the interface. The app is around 10 MB.
+It is built with [Tauri 2](https://tauri.app): a Rust backend for the connections and transfers, and a React frontend for the interface. The app is about 12 MB, 7 MB as a zip download.
 
 ## Features
 
@@ -78,9 +78,8 @@ cargo test
 | [Bearded Icons](https://github.com/BeardedBear/bearded-icons) | BeardedBear | GPL-3.0 |
 | [vscode-icons](https://github.com/vscode-icons/vscode-icons) | Roberto Huertas | MIT |
 | [Lucide](https://lucide.dev) | Lucide contributors | ISC |
-| [Geist and Geist Mono](https://vercel.com/font) | Vercel | SIL Open Font License 1.1 |
 
-The copied icon sets are in `src/assets/`, each with its license and a `SOURCE.txt` noting where it came from.
+The full license texts are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), which also ships inside the app. The icon sets copied into `src/assets/` each keep their license and a `SOURCE.txt` noting where they came from.
 
 ## License
 
