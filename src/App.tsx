@@ -819,7 +819,7 @@ export default function App() {
             <button type="button" className="button" onClick={() => void importSites("cyberduck")}>
               <FileInput size={14} /> Import from Cyberduck
             </button>
-            <button type="button" className="button" onClick={() => setDialog({ type: "site", site: emptySite() })}>
+            <button type="button" className="button primary" onClick={() => setDialog({ type: "site", site: emptySite() })}>
               <Plus size={14} /> New site
             </button>
           </div>

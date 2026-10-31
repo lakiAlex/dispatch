@@ -133,7 +133,7 @@ export const Sidebar = forwardRef<HTMLInputElement, SidebarProps>(function Sideb
             <button type="button" className="button" onClick={() => props.onImport("cyberduck")}>
               <FileInput size={14} /> Import from Cyberduck
             </button>
-            <button type="button" className="button" onClick={props.onNew}>
+            <button type="button" className="button primary" onClick={props.onNew}>
               <Plus size={14} /> New site
             </button>
           </div>

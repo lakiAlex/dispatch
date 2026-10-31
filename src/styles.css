@@ -23,9 +23,9 @@
   --sel-focus: rgba(255, 255, 255, 0.114);
   --ring: rgba(73, 73, 73, 0.55);
   --focus: #494949;
-  --primary: #606060;
-  --primary-hover: #747474;
-  --on-primary: #dbdfe0;
+  --primary: #ffffff;
+  --primary-hover: #dcdcdc;
+  --on-primary: #0a0a0a;
   --overlay: rgba(0, 0, 0, 0.55);
   --dots: rgba(255, 255, 255, 0.08);
   --scrollbar: rgba(64, 64, 64, 0.55);
@@ -88,8 +88,8 @@
   --sel-focus: rgba(0, 0, 0, 0.09);
   --ring: rgba(0, 0, 0, 0.1);
   --focus: #a3a3a3;
-  --primary: #333333;
-  --primary-hover: #4a4a4a;
+  --primary: #0a0a0a;
+  --primary-hover: #2e2e2e;
   --on-primary: #ffffff;
   --overlay: rgba(0, 0, 0, 0.2);
   --dots: rgba(0, 0, 0, 0.11);
@@ -367,6 +367,7 @@ body.resizing * {
   border-radius: 6px;
   border: 1px solid var(--input-border);
   background: var(--bg-muted);
+  color: var(--fg);
   font-weight: 500;
   white-space: nowrap;
   box-shadow: var(--shadow-sm);
@@ -1192,9 +1193,10 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .placeholder-actions {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
+  min-width: 240px;
   margin-top: 14px;
 }
 
