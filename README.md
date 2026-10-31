@@ -2,6 +2,8 @@
 
 Dispatch is an open source SFTP and FTP client for macOS, with a local and a remote file pane side by side, a transfer queue, and one-click import of saved sites from FileZilla.
 
+![Dispatch connected to a server, with the local and remote panes and the transfer queue](docs/screenshot.png)
+
 It is built with [Tauri 2](https://tauri.app): a Rust backend for the connections and transfers, and a React frontend for the interface. The app is around 10 MB.
 
 ## Features
