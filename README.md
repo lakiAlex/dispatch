@@ -1,4 +1,8 @@
-# Dispatch
+<p align="center">
+  <img src="docs/icon.png" width="128" height="128" alt="Dispatch app icon">
+</p>
+
+<h1 align="center">Dispatch</h1>
 
 Dispatch is an open source SFTP and FTP client for macOS, with a local and a remote file pane side by side, a transfer queue, and one-click import of saved sites from FileZilla and Cyberduck.
 
