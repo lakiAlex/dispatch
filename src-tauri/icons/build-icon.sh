@@ -3,7 +3,7 @@
 # macOS 26 draws a light border around apps that only ship a legacy .icns, so the
 # bundle also carries Assets.car, selected by CFBundleIconName in ../Info.plist.
 # AppIcon.icon/Assets/background.png comes from ~/Projects/app-icon-kit/make_icon.py
-# with the Lucide arrow-down-up icon, the glyph at 56% of the icon width, and line brightness 0.16.
+# with the Lucide arrow-down-up icon, the glyph at 56% of the icon width, line brightness 0.16, on background #14120b.
 # After replacing it, also run `pnpm tauri icon AppIcon.icon/Assets/background.png`.
 set -e
 cd "$(dirname "$0")"
