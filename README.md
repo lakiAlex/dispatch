@@ -3,7 +3,7 @@
   <img src="docs/title-light.png" width="186" height="44" alt="Dispatch">
 </picture>
 
-Dispatch is an extremely snappy, lightweight, open-source SFTP and FTP client for macOS. Browse local and remote files side by side, manage transfers with a built-in queue, and easily import saved connections from FileZilla and Cyberduck.
+Dispatch is a native SFTP and FTP client for macOS, built to stay fast and out of your way. Browse local and remote files side by side, manage transfers with a built-in queue, and import your saved connections from FileZilla and Cyberduck in one click. Free and open source.
 
 ![Dispatch on first launch: adding a server in the New site dialog, connecting, and uploading a file from Downloads with its progress in the transfer queue](docs/demo.gif)
 
@@ -11,7 +11,7 @@ It is built with [Tauri 2](https://tauri.app): a Rust backend for the connection
 
 ## Why Dispatch
 
-- **Fast and native.** A real macOS app built in Rust, about 12 MB, that opens instantly. No Electron and no bundled browser.
+- **Native and quick.** A real macOS app built in Rust, about 12 MB, that opens instantly. No Electron and no bundled browser.
 - **Free and open source.** No account, no subscription and no telemetry. GPL-3.0 licensed.
 - **A modern FileZilla and Cyberduck alternative for Mac.** Import your existing sites in one click and keep working.
 - **Local and remote side by side.** Two file panes, drag and drop, and a transfer queue that keeps browsing responsive while files move.
