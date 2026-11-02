@@ -3,11 +3,18 @@
   <img src="docs/title-light.png" width="186" height="44" alt="Dispatch">
 </picture>
 
-Dispatch is an open source SFTP and FTP client for macOS, with a local and a remote file pane side by side, a transfer queue, and one-click import of saved sites from FileZilla and Cyberduck.
+Dispatch is an extremely snappy, lightweight, open-source SFTP and FTP client for macOS. Browse local and remote files side by side, manage transfers with a built-in queue, and easily import saved connections from FileZilla and Cyberduck.
 
 ![Dispatch on first launch: adding a server in the New site dialog, connecting, and uploading a file from Downloads with its progress in the transfer queue](docs/demo.gif)
 
 It is built with [Tauri 2](https://tauri.app): a Rust backend for the connections and transfers, and a React frontend for the interface. The app is about 12 MB, 7 MB as a zip download.
+
+## Why Dispatch
+
+- **Fast and native.** A real macOS app built in Rust, about 12 MB, that opens instantly. No Electron and no bundled browser.
+- **Free and open source.** No account, no subscription and no telemetry. GPL-3.0 licensed.
+- **A modern FileZilla and Cyberduck alternative for Mac.** Import your existing sites in one click and keep working.
+- **Local and remote side by side.** Two file panes, drag and drop, and a transfer queue that keeps browsing responsive while files move.
 
 ## Features
 
@@ -83,6 +90,20 @@ cargo test
 | [Lucide](https://lucide.dev) | Lucide contributors | ISC |
 
 The full license texts are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), which also ships inside the app. The icon sets copied into `src/assets/` each keep their license and a `SOURCE.txt` noting where they came from.
+
+## FAQ
+
+**Is Dispatch free?** Yes. It is free and open source under the GPL-3.0 license, with no account, subscription or telemetry.
+
+**Does it work on Apple Silicon and Intel Macs?** The prebuilt download is for Apple Silicon (M1 and later), macOS 11 or later. On an Intel Mac you can build it from source.
+
+**Can I import my FileZilla or Cyberduck sites?** Yes. Dispatch reads FileZilla's Site Manager and Cyberduck bookmarks (or exported `.duck` files) and keeps folders, hosts, usernames, key files and more.
+
+**Which protocols does it support?** SFTP, FTP, FTP over TLS (FTPES and FTPS) and plain FTP.
+
+**Where are my passwords stored?** In the macOS Keychain, never in plain text.
+
+**Is it a good FileZilla alternative?** It aims to be a lighter, native one for macOS, with the same side-by-side panes and transfer queue, and it imports your FileZilla sites directly.
 
 ## License
 
