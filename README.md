@@ -54,8 +54,11 @@ It is built with [Tauri 2](https://tauri.app): a Rust backend for the connection
 With Homebrew:
 
 ```sh
+brew trust --cask lakialex/tap/dispatch
 brew install --cask lakialex/tap/dispatch
 ```
+
+Homebrew only loads casks from other taps once they are trusted, which the first line does.
 
 Or download `Dispatch-SFTP_<version>_aarch64.dmg` from [Releases](../../releases), open it, and drag `Dispatch SFTP` into the Applications folder. The build is for Apple Silicon Macs and needs macOS 11 or later. A `.app.zip` is attached too, if you prefer that.
 
