@@ -1,6 +1,6 @@
 [package]
 name = "dispatch"
-version = "1.2.0"
+version = "1.2.1"
 description = "SFTP and FTP client for macOS"
 license = "GPL-3.0-or-later"
 authors = []
@@ -42,6 +42,9 @@ tauri-plugin-dialog = "2.8.4"
 roxmltree = "0.21.2"
 base64 = "0.23.1"
 plist = "1.10.3"
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+tauri-plugin-notification = "2"
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration

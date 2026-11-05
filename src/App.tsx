@@ -50,6 +50,7 @@ import { ChmodDialog, ConfirmDialog, HostKeyDialog, ImportReportDialog, InputDia
 import { FilePane } from "./components/FilePane";
 import { MemeButton } from "./components/Meme";
 import { Sidebar, SidebarIcon, type SidebarIconName } from "./components/Sidebar";
+import { UpdateButton } from "./components/Update";
 import { WindowSnap } from "./components/WindowSnap";
 import { SiteDialog } from "./components/SiteDialog";
 import { TransferPanel } from "./components/TransferPanel";
@@ -1002,6 +1003,7 @@ export default function App() {
                   </button>
                 )
               )}
+              <UpdateButton app="Dispatch SFTP" repo="lakiAlex/dispatch" restartNote="Running transfers stop." notify />
               <WindowSnap />
               <button
                 type="button"

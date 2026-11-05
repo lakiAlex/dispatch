@@ -1,7 +1,8 @@
 {
   "name": "dispatch",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
+  "packageManager": "pnpm@9.11.0",
   "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
@@ -16,7 +17,10 @@
     "@iconify-json/vscode-icons": "^1.2.95",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2.8.4",
+    "@tauri-apps/plugin-notification": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-process": "^2",
+    "@tauri-apps/plugin-updater": "^2",
     "lucide-react": "^1.66.0",
     "material-icon-theme": "5.40.0",
     "react": "^19.1.0",

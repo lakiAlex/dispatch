@@ -22,6 +22,9 @@
         }
       ]
     },
-    "dialog:default"
+    "dialog:default",
+    "updater:default",
+    "process:allow-restart",
+    "notification:default"
   ]
 }

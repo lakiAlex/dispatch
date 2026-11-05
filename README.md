@@ -60,7 +60,7 @@ brew install --cask lakialex/tap/dispatch
 
 Homebrew only loads casks from other taps once they are trusted, which the first line does.
 
-Or download `Dispatch-SFTP_<version>_aarch64.dmg` from [Releases](../../releases), open it, and drag `Dispatch SFTP` into the Applications folder. The build is for Apple Silicon Macs and needs macOS 11 or later. A `.app.zip` is attached too, if you prefer that.
+Or download the `.dmg` from [Releases](../../releases), open it, and drag `Dispatch SFTP` into the Applications folder. The build runs on Apple Silicon and Intel Macs and needs macOS 11 or later.
 
 The app is not signed with an Apple Developer certificate or notarized, so the first time you open a download macOS says it cannot be verified. Either right-click the app and choose Open, then confirm once, or run:
 
@@ -69,6 +69,8 @@ xattr -dr com.apple.quarantine "/Applications/Dispatch SFTP.app"
 ```
 
 The Homebrew cask does this for you.
+
+Dispatch checks GitHub for new versions. When one is out, an Update button shows in the title bar with what changed, and Update and restart installs it. Versions from before the update button need one `brew upgrade --cask dispatch` or a new download to get it.
 
 ## Build from source
 
@@ -99,6 +101,7 @@ cargo test
 | `src-tauri/src/commands.rs` | Commands called by the frontend |
 | `src/components/Sidebar.tsx` | Sidebar icons and the Sites panel |
 | `src/components/WindowSnap.tsx` | The window layout button, shared with Lookout and Cells |
+| `src/components/Update.tsx` | The update button and panel, shared with Lookout, Cells and Patchy. `VITE_FAKE_UPDATE=1 pnpm tauri dev` shows a made-up update. |
 | `src/components/` | Interface |
 | `src/icons/` | File icon sets |
 | `src-tauri/icons/` | App icon. `build-icon.sh` rebuilds the macOS 26 icon. |
