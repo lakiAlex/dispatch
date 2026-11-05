@@ -1,5 +1,5 @@
 import { open } from "@tauri-apps/plugin-dialog";
-import { Server, Trash2 } from "lucide-react";
+import { Server, Trash2 } from "./icons";
 import { useState } from "react";
 import { PROTOCOLS, type AuthMethod, type Protocol, type Site } from "../api";
 import { Dialog } from "./Dialog";

@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, ChevronDown, ChevronUp, FolderOpen, RotateCw, TriangleAlert, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronUp, FolderOpen, RotateCw, TriangleAlert, X } from "./icons";
 import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import type { ConflictPolicy, Job, JobState, LogLine } from "../api";
 import { formatSize, formatSpeed } from "../lib/format";

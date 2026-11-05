@@ -94,6 +94,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+## Hugeicons
+
+The interface icons come from the free Hugeicons set, stroke-rounded style, through `@hugeicons/react` and `@hugeicons/core-free-icons` (MIT License). https://hugeicons.com
+
 ## Lucide
 
 https://lucide.dev, included from npm package lucide-react. License: ISC.

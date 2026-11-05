@@ -1,4 +1,4 @@
-import { CircleCheck, KeyRound, Lock, ShieldAlert, TriangleAlert } from "lucide-react";
+import { CircleCheck, KeyRound, Lock, ShieldAlert, TriangleAlert } from "./icons";
 import { useState, type ReactNode } from "react";
 import type { ImportReport } from "../api";
 import { Dialog } from "./Dialog";

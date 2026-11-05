@@ -1,4 +1,4 @@
-import { ChevronRight, House } from "lucide-react";
+import { ChevronRight, House } from "./icons";
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 interface Segment {

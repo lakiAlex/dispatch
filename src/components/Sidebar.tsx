@@ -1,8 +1,26 @@
-import { ArrowDownUp, ChevronRight, FileInput, LoaderCircle, Plus, Search, Server, X } from "lucide-react";
+import { ArrowDataTransferVerticalIcon, FileImportIcon, MoreHorizontalIcon, PlusSignIcon, ServerStack02Icon, SidebarLeftIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ChevronRight, FileInput, LoaderCircle, Plus, Search, Server, X } from "./icons";
 import { forwardRef, useMemo, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { protocolLabel, type Site } from "../api";
 
 const COLLAPSED_KEY = "dispatch.collapsedFolders";
+
+// Sidebar icons, from Hugeicons like the rest of the app. The open panel's icon is drawn bolder.
+const ICONS = {
+  sites: ServerStack02Icon,
+  transfers: ArrowDataTransferVerticalIcon,
+  new: PlusSignIcon,
+  import: FileImportIcon,
+  settings: MoreHorizontalIcon,
+  sidebar: SidebarLeftIcon,
+};
+
+export type SidebarIconName = keyof typeof ICONS;
+
+export function SidebarIcon({ name, filled = false, size = 24 }: { name: SidebarIconName; filled?: boolean; size?: number }) {
+  return <HugeiconsIcon icon={ICONS[name]} size={size} strokeWidth={filled ? 2 : 1.6} />;
+}
 
 export const SITE_COLORS: Record<string, string> = {
   red: "var(--c-red)",
@@ -30,6 +48,7 @@ interface SidebarProps {
   onSelect: (id: string) => void;
   onConnect: (site: Site) => void;
   onNew: () => void;
+  onClose: () => void;
   onImport: (source: "filezilla" | "cyberduck") => void;
   onContextMenu: (e: ReactMouseEvent, site: Site) => void;
   /** Right-click on the empty part of the site list. */
@@ -89,12 +108,17 @@ export const Sidebar = forwardRef<HTMLInputElement, SidebarProps>(function Sideb
   };
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-titlebar" data-tauri-drag-region />
-      <div className="brand" data-tauri-drag-region>
-        <ArrowDownUp size={15} strokeWidth={2} />
-        <span className="brand-name">Dispatch</span>
-        <span className="brand-sub">- SFTP Client</span>
+    <div className="side-panel-inner sites-panel">
+      <div className="side-head">
+        <span className="side-title">Sites</span>
+        <div className="side-actions">
+          <button type="button" className="icon-button" title="New site" onClick={props.onNew}>
+            <Plus size={14} />
+          </button>
+          <button type="button" className="icon-button" title="Close" onClick={props.onClose}>
+            <X size={14} />
+          </button>
+        </div>
       </div>
 
       <div className="sidebar-search">
@@ -196,11 +220,6 @@ export const Sidebar = forwardRef<HTMLInputElement, SidebarProps>(function Sideb
         })}
       </div>
 
-      <div className="sidebar-footer">
-        <button type="button" className="footer-button" onClick={props.onNew} title="New site">
-          <Plus size={14} /> New site
-        </button>
-      </div>
-    </aside>
+    </div>
   );
 });

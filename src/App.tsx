@@ -4,7 +4,6 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open as openFileDialog } from "@tauri-apps/plugin-dialog";
 import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
 import {
-  Check,
   Copy,
   Download,
   ExternalLink,
@@ -27,7 +26,9 @@ import {
   Unplug,
   Upload,
   CopyPlus,
-} from "lucide-react";
+  ArrowDownUp,
+  Cat,
+} from "./components/icons";
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import {
   api,
@@ -47,7 +48,9 @@ import {
 import { ContextMenu, type MenuEntry, type MenuState } from "./components/ContextMenu";
 import { ChmodDialog, ConfirmDialog, HostKeyDialog, ImportReportDialog, InputDialog, SecretDialog } from "./components/Dialogs";
 import { FilePane } from "./components/FilePane";
-import { Sidebar } from "./components/Sidebar";
+import { MemeButton } from "./components/Meme";
+import { Sidebar, SidebarIcon, type SidebarIconName } from "./components/Sidebar";
+import { WindowSnap } from "./components/WindowSnap";
 import { SiteDialog } from "./components/SiteDialog";
 import { TransferPanel } from "./components/TransferPanel";
 import { usePane } from "./hooks/usePane";
@@ -82,6 +85,10 @@ const PANEL_KEY = "dispatch.panel";
 type ImportSource = "filezilla" | "cyberduck";
 const THEME_KEY = "dispatch.theme";
 const ICON_SET_KEY = "dispatch.iconSet";
+const SIDE_KEY = "dispatch.sideWidth";
+const SIDE_OPEN_KEY = "dispatch.sitesOpen";
+const COMPACT_KEY = "dispatch.compactBar";
+const MEMES_KEY = "dispatch.memes";
 
 function loadPanel(): { collapsed: boolean; height: number } {
   try {
@@ -115,6 +122,15 @@ export default function App() {
   const [drag, setDrag] = useState<{ payload: DragPayload; x: number; y: number } | null>(null);
   const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const [themeSwitched, setThemeSwitched] = useState(false);
+  const [sitesOpen, setSitesOpen] = useState(() => localStorage.getItem(SIDE_OPEN_KEY) !== "0");
+  const [sideWidth, setSideWidth] = useState(() => Number(localStorage.getItem(SIDE_KEY)) || 272);
+  const [compact, setCompact] = useState(() => localStorage.getItem(COMPACT_KEY) === "1");
+  const [memes, setMemes] = useState(() => localStorage.getItem(MEMES_KEY) !== "0");
+
+  useEffect(() => {
+    localStorage.setItem(SIDE_OPEN_KEY, sitesOpen ? "1" : "0");
+  }, [sitesOpen]);
 
   const localLister = useCallback((path: string) => api.localList(path), []);
   const remoteLister = useMemo(() => (session ? (path: string) => api.remoteList(session.id, path) : null), [session]);
@@ -677,8 +693,12 @@ export default function App() {
       if (!e.metaKey) return;
       if (e.key === "k") {
         e.preventDefault();
-        searchRef.current?.focus();
-        searchRef.current?.select();
+        setSitesOpen(true);
+        // The panel may still be mounting when it was closed.
+        requestAnimationFrame(() => {
+          searchRef.current?.focus();
+          searchRef.current?.select();
+        });
       } else if (e.key === "r") {
         // Cmd+R would reload the web view.
         e.preventDefault();
@@ -842,108 +862,219 @@ export default function App() {
     </div>
   );
 
+  // ---- Sidebar ----
+
+  const toggleCompact = () => {
+    setCompact(!compact);
+    localStorage.setItem(COMPACT_KEY, compact ? "0" : "1");
+  };
+
+  const startSideResize = (e: ReactMouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startW = sideWidth;
+    const move = (ev: MouseEvent) => setSideWidth(Math.max(220, Math.min(480, startW + ev.clientX - startX)));
+    const up = () => {
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", up);
+      document.body.classList.remove("col-resizing");
+      setSideWidth((w) => (localStorage.setItem(SIDE_KEY, String(w)), w));
+    };
+    document.body.classList.add("col-resizing");
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+  };
+
+  const sideButton = (name: SidebarIconName, tip: string, onClick: (e: ReactMouseEvent) => void, active = false, badge = 0) => (
+    <button type="button" className={`activity-button${active ? " active" : ""}`} data-tip={tip} aria-label={tip} onClick={onClick}>
+      <SidebarIcon name={name} filled={active} />
+      {badge > 0 && <span className="activity-badge">{badge > 99 ? "99+" : badge}</span>}
+    </button>
+  );
+
+  const menuBeside = (e: ReactMouseEvent, items: MenuEntry[]) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setMenu({ x: rect.right + 8, y: Math.max(8, rect.bottom - 30 - items.length * 26), items });
+  };
+
+  const importMenu = (e: ReactMouseEvent) =>
+    menuBeside(e, [
+      { label: "Import from FileZilla", icon: <FileInput size={14} />, onSelect: () => void importSites("filezilla") },
+      { label: "Import from Cyberduck", icon: <FileInput size={14} />, onSelect: () => void importSites("cyberduck") },
+    ]);
+
+  const settingsMenu = (e: ReactMouseEvent) =>
+    menuBeside(e, [
+      {
+        label: "Appearance",
+        icon: theme === "dark" ? <Moon size={14} /> : <Sun size={14} />,
+        detail: theme === "dark" ? "Dark" : "Light",
+        submenu: {
+          items: (["light", "dark"] as Theme[]).map((t) => ({
+            label: t === "dark" ? "Dark" : "Light",
+            checked: theme === t,
+            onSelect: () => {
+              setThemeSwitched(true);
+              setTheme(t);
+            },
+          })),
+        },
+      },
+      {
+        label: "File icons",
+        icon: <Rainbow size={14} />,
+        detail: ICON_SETS.find((set) => set.id === iconSet)?.label,
+        submenu: {
+          items: ICON_SETS.map((set) => ({ label: set.label, checked: set.id === iconSet, onSelect: () => setIconSet(set.id) })),
+        },
+      },
+      "separator",
+      {
+        label: "Memes",
+        icon: <Cat size={14} />,
+        detail: memes ? "On" : "Off",
+        submenu: {
+          items: [true, false].map((on) => ({
+            label: on ? "Enable" : "Disable",
+            checked: memes === on,
+            onSelect: () => {
+              setMemes(on);
+              localStorage.setItem(MEMES_KEY, on ? "1" : "0");
+            },
+          })),
+        },
+      },
+    ]);
+
+  const runningJobs = jobList.filter((j) => j.state === "queued" || j.state === "active" || j.state === "conflict").length;
+
   return (
     <ThemeContext.Provider value={theme}>
       <IconSetContext.Provider value={iconContext}>
-        <div className={`app${drag ? " dragging" : ""}`}>
-          <Sidebar
-            ref={searchRef}
-            sites={sites}
-            selectedId={selectedSiteId}
-            connectedSiteId={session?.siteId ?? null}
-            connectingSiteId={connecting?.id || null}
-            onSelect={setSelectedSiteId}
-            onConnect={(site) => void connectTo(site)}
-            onNew={() => setDialog({ type: "site", site: emptySite() })}
-            onImport={(source) => void importSites(source)}
-            onContextMenu={siteMenu}
-            onListContextMenu={(e) =>
-              setMenu({
-                x: e.clientX,
-                y: e.clientY,
-                items: [
-                  { label: "New site", icon: <Plus size={14} />, onSelect: () => setDialog({ type: "site", site: emptySite() }) },
-                  { label: "Import from FileZilla", icon: <FileInput size={14} />, onSelect: () => void importSites("filezilla") },
-                    { label: "Import from Cyberduck", icon: <FileInput size={14} />, onSelect: () => void importSites("cyberduck") },
-                ],
-              })
-            }
-          />
-
-          <main className="main">
-            <header className="titlebar" data-tauri-drag-region>
-              <div className="connection" data-tauri-drag-region>
-                {connecting ? (
-                  <>
-                    <LoaderCircle size={14} className="spin accent" />
-                    <span data-tauri-drag-region>Connecting to {connecting.name || connecting.host}</span>
-                  </>
-                ) : session ? (
-                  <>
+        <div
+          className={`app${drag ? " dragging" : ""}${compact ? " compact" : ""}`}
+          style={{ ["--side-w" as string]: sitesOpen ? `${sideWidth}px` : "0px" }}
+        >
+          <header className="titlebar" data-tauri-drag-region>
+            <div className="titlebar-left" data-tauri-drag-region>
+              <span className="brand" data-tauri-drag-region>
+                <ArrowDownUp size={15} strokeWidth={2.2} />
+                <span className="brand-name" data-tauri-drag-region>
+                  Dispatch
+                </span>
+              </span>
+            </div>
+            <div className="connection" data-tauri-drag-region>
+              {connecting ? (
+                <span className="connection-pill connecting">
+                  <LoaderCircle size={13} className="spin" />
+                  <span>Connecting to {connecting.name || connecting.host}</span>
+                </span>
+              ) : session ? (
+                <>
+                  <span className="connection-pill">
                     <span className="live-dot" />
-                    <strong data-tauri-drag-region>{session.label}</strong>
-                    <span className="muted" data-tauri-drag-region>
-                      {session.user}@{session.host}
-                    </span>
-                    <span className="proto-tag">{protocolLabel(session.protocol)}</span>
-                  </>
-                ) : (
-                  <span className="muted" data-tauri-drag-region>
-                    Not connected
+                    <strong>{session.label}</strong>
                   </span>
-                )}
-              </div>
-              <div className="titlebar-actions">
-                {session ? (
-                  <button type="button" className="button small danger" onClick={() => void disconnect()}>
-                    <Unplug size={13} /> Disconnect
+                  <span className="proto-tag" data-tauri-drag-region>
+                    {protocolLabel(session.protocol)}
+                  </span>
+                  <span className="connection-where" data-tauri-drag-region>
+                    {session.user}@{session.host}
+                  </span>
+                </>
+              ) : (
+                <span className="connection-where" data-tauri-drag-region>
+                  Not connected
+                </span>
+              )}
+            </div>
+            <div className="titlebar-actions">
+              {session ? (
+                <button type="button" className="button small danger" onClick={() => void disconnect()}>
+                  <Unplug size={13} /> Disconnect
+                </button>
+              ) : (
+                selectedSite &&
+                !connecting && (
+                  <button type="button" className="button small primary" onClick={() => void connectTo(selectedSite)}>
+                    <Plug size={13} /> Connect
                   </button>
-                ) : (
-                  selectedSite &&
-                  !connecting && (
-                    <button type="button" className="button small primary" onClick={() => void connectTo(selectedSite)}>
-                      <Plug size={13} /> Connect
-                    </button>
-                  )
-                )}
-                <button
-                  type="button"
-                  className="icon-set-button"
-                  title="File icons"
-                  onClick={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setMenu({
-                      x: rect.left,
-                      y: rect.bottom + 6,
-                      items: ICON_SETS.map((set) => ({
-                        label: set.label,
-                        icon: set.id === iconSet ? <Check size={14} /> : undefined,
-                        onSelect: () => setIconSet(set.id),
-                      })),
-                    });
-                  }}
-                >
-                  <Rainbow size={15} />
-                </button>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={theme === "dark"}
-                  className={`theme-switch ${theme}`}
-                  title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                  onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-                >
-                  <span className="theme-thumb" />
-                  <span className="theme-option sun">
-                    <Sun size={14} />
-                  </span>
-                  <span className="theme-option moon">
-                    <Moon size={14} />
-                  </span>
-                </button>
-              </div>
-            </header>
+                )
+              )}
+              <WindowSnap />
+              <button
+                type="button"
+                role="switch"
+                aria-checked={theme === "dark"}
+                className={`theme-switch ${theme}${themeSwitched ? " switched" : ""}`}
+                title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                onClick={() => {
+                  setThemeSwitched(true);
+                  setTheme((t) => (t === "dark" ? "light" : "dark"));
+                }}
+              >
+                <span className="theme-thumb" />
+                <span className="theme-option sun">
+                  <Sun size={15} strokeWidth={1.9} />
+                </span>
+                <span className="theme-option moon">
+                  <Moon size={12.5} strokeWidth={1.9} />
+                </span>
+              </button>
+            </div>
+          </header>
 
+          <nav className="activity-bar">
+            <div className="activity-group">
+              {sideButton("sites", "Sites (⌘K)", () => setSitesOpen((o) => !o), sitesOpen)}
+              {sideButton("transfers", panel.collapsed ? "Show transfers" : "Hide transfers", () => setPanel((p) => ({ ...p, collapsed: !p.collapsed })), !panel.collapsed, runningJobs)}
+            </div>
+            <div className="activity-group">
+              {sideButton("new", "New site", () => setDialog({ type: "site", site: emptySite() }))}
+              {sideButton("import", "Import sites", importMenu)}
+            </div>
+            <span className="activity-spacer" />
+            <div className="activity-group">
+              {sideButton("sidebar", compact ? "Expand sidebar" : "Minimize sidebar", toggleCompact)}
+              {sideButton("settings", "Settings", settingsMenu)}
+            </div>
+          </nav>
+
+          <aside className="side-panel">
+            {sitesOpen && (
+              <div className="side-panel-body">
+              <Sidebar
+                ref={searchRef}
+                sites={sites}
+                selectedId={selectedSiteId}
+                connectedSiteId={session?.siteId ?? null}
+                connectingSiteId={connecting?.id || null}
+                onSelect={setSelectedSiteId}
+                onConnect={(site) => void connectTo(site)}
+                onNew={() => setDialog({ type: "site", site: emptySite() })}
+                onClose={() => setSitesOpen(false)}
+                onImport={(source) => void importSites(source)}
+                onContextMenu={siteMenu}
+                onListContextMenu={(e) =>
+                  setMenu({
+                    x: e.clientX,
+                    y: e.clientY,
+                    items: [
+                      { label: "New site", icon: <Plus size={14} />, onSelect: () => setDialog({ type: "site", site: emptySite() }) },
+                      { label: "Import from FileZilla", icon: <FileInput size={14} />, onSelect: () => void importSites("filezilla") },
+                        { label: "Import from Cyberduck", icon: <FileInput size={14} />, onSelect: () => void importSites("cyberduck") },
+                    ],
+                  })
+                }
+              />
+              </div>
+            )}
+            {sitesOpen && <div className="side-resize" onMouseDown={startSideResize} />}
+          </aside>
+
+          <main className="content">
+            {memes && <MemeButton />}
             <div className="panes">
               <FilePane
                 side="local"
@@ -970,7 +1101,7 @@ export default function App() {
                 headerActions={
                   connecting && (
                     <button type="button" className="button small stop-button" onClick={() => void api.cancelConnect()}>
-                      <Square size={10} fill="currentColor" /> Stop
+                      <Square size={12} /> Stop
                     </button>
                   )
                 }

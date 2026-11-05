@@ -1,4 +1,4 @@
-import { ArrowUp, ChevronLeft, ChevronRight, Eye, EyeOff, FolderPlus, LoaderCircle, RefreshCw, Search, TriangleAlert, X } from "lucide-react";
+import { ArrowUp, ChevronLeft, ChevronRight, Eye, EyeOff, FolderPlus, LoaderCircle, RefreshCw, Search, TriangleAlert, X } from "./icons";
 import {
   useEffect,
   useLayoutEffect,
