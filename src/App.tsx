@@ -28,6 +28,7 @@ import {
   CopyPlus,
   BrandMark,
   Cat,
+  ChartColumn,
 } from "./components/icons";
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
 import {
@@ -59,6 +60,7 @@ import { dropTargetAt, type DragPayload, type DropTarget, type Side } from "./li
 import { copyText, isInside, joinPath, pluralize } from "./lib/format";
 import { ThemeContext, type Theme } from "./lib/theme";
 import { ICON_SETS, IconSetContext, loadIconSet, type IconResolver, type IconSetId } from "./icons/sets";
+import { saveUsageStats, usageStatsOn } from "./lib/usage";
 
 type DialogState =
   | { type: "site"; site: Site }
@@ -128,6 +130,7 @@ export default function App() {
   const [sideWidth, setSideWidth] = useState(() => Number(localStorage.getItem(SIDE_KEY)) || 272);
   const [compact, setCompact] = useState(() => localStorage.getItem(COMPACT_KEY) === "1");
   const [memes, setMemes] = useState(() => localStorage.getItem(MEMES_KEY) !== "0");
+  const [usageStats, setUsageStats] = useState(usageStatsOn);
 
   useEffect(() => {
     localStorage.setItem(SIDE_OPEN_KEY, sitesOpen ? "1" : "0");
@@ -943,6 +946,15 @@ export default function App() {
               localStorage.setItem(MEMES_KEY, on ? "1" : "0");
             },
           })),
+        },
+      },
+      {
+        label: "Anonymous usage stats",
+        icon: <ChartColumn size={14} />,
+        checked: usageStats,
+        onSelect: () => {
+          setUsageStats(!usageStats);
+          saveUsageStats(!usageStats);
         },
       },
     ]);

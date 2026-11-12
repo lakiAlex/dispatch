@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { trackAppStarted } from "./lib/usage";
 import "./styles.css";
 
 // Set before the first paint so a light theme does not flash dark on start.
@@ -11,3 +12,4 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <App />
   </React.StrictMode>,
 );
+trackAppStarted();

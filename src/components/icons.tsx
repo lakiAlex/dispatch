@@ -12,6 +12,7 @@ import {
   ArrowUp02Icon,
   Cancel01Icon,
   CatIcon,
+  ChartColumnIcon,
   CheckmarkCircle02Icon,
   Copy01Icon,
   CopyPlusIcon,
@@ -99,6 +100,7 @@ function icon(svg: IconSvgElement) {
 export const ArrowDown = icon(ArrowDown02Icon);
 export const ArrowUp = icon(ArrowUp02Icon);
 export const Cat = icon(CatIcon);
+export const ChartColumn = icon(ChartColumnIcon);
 export const Check = icon(Tick02Icon);
 export const ChevronDown = icon(ArrowDown01Icon);
 export const ChevronLeft = icon(ArrowLeft01Icon);
