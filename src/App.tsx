@@ -26,7 +26,7 @@ import {
   Unplug,
   Upload,
   CopyPlus,
-  ArrowDownUp,
+  BrandMark,
   Cat,
 } from "./components/icons";
 import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
@@ -959,7 +959,7 @@ export default function App() {
           <header className="titlebar" data-tauri-drag-region>
             <div className="titlebar-left" data-tauri-drag-region>
               <span className="brand" data-tauri-drag-region>
-                <ArrowDownUp size={15} strokeWidth={2.2} />
+                <BrandMark />
                 <span className="brand-name" data-tauri-drag-region>
                   Dispatch
                 </span>
