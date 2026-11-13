@@ -1,7 +1,6 @@
 // The app's icons: Hugeicons stroke-rounded (MIT, https://hugeicons.com), the set
-// Lookout uses, under the names the components use. The title bar's BrandMark is the
-// app icon's glyph, and the "Minimal" file icons stay Lucide.
-import type { SVGProps } from "react";
+// Lookout uses, under the names the components use. The title bar's BrandMark is drawn
+// like the app icon, and the "Minimal" file icons stay Lucide.
 import {
   Alert02Icon,
   ArrowDown01Icon,
@@ -47,40 +46,29 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
-// Hugeicons ServerIcon, drawn like the app icon (src-tauri/icons/make-icon.py): a thick raised band with a
-// side face and a fold along the diagonal. Colors come from the --brand-* variables in styles.css.
-const BRAND_PATHS = [
-  "M1.99219 7.99988C1.99219 6.11426 1.99219 5.17145 2.57797 4.58566C3.16376 3.99988 4.10657 3.99988 5.99219 3.99988H17.9922C19.8778 3.99988 20.8206 3.99988 21.4064 4.58566C21.9922 5.17145 21.9922 6.11426 21.9922 7.99988C21.9922 9.8855 21.9922 10.8283 21.4064 11.4141C20.8206 11.9999 19.8778 11.9999 17.9922 11.9999H5.99219C4.10657 11.9999 3.16376 11.9999 2.57797 11.4141C1.99219 10.8283 1.99219 9.8855 1.99219 7.99988Z",
-  "M1.99219 16C1.99219 14.1143 1.99219 13.1714 2.57798 12.5856C3.16378 11.9998 4.10659 11.9999 5.99223 11.9999L17.9922 12C19.8778 12 20.8206 12 21.4064 12.5858C21.9922 13.1716 21.9922 14.1144 21.9922 16C21.9922 17.8857 21.9922 18.8285 21.4064 19.4143C20.8206 20.0001 19.8778 20.0001 17.9922 20.0001H5.99219C4.10657 20.0001 3.16376 20.0001 2.57797 19.4143C1.99219 18.8285 1.99219 17.8857 1.99219 16Z",
-  "M6.11719 7.99988H5.99219M6.24219 7.99988C6.24219 8.13795 6.13026 8.24988 5.99219 8.24988C5.85412 8.24988 5.74219 8.13795 5.74219 7.99988C5.74219 7.86181 5.85412 7.74988 5.99219 7.74988C6.13026 7.74988 6.24219 7.86181 6.24219 7.99988Z",
-  "M6.11719 15.9999H5.99219M6.24219 15.9999C6.24219 16.1379 6.13026 16.2499 5.99219 16.2499C5.85412 16.2499 5.74219 16.1379 5.74219 15.9999C5.74219 15.8618 5.85412 15.7499 5.99219 15.7499C6.13026 15.7499 6.24219 15.8618 6.24219 15.9999Z",
-  "M10.1172 7.99988H9.99219M10.2422 7.99988C10.2422 8.13795 10.1303 8.24988 9.99219 8.24988C9.85412 8.24988 9.74219 8.13795 9.74219 7.99988C9.74219 7.86181 9.85412 7.74988 9.99219 7.74988C10.1303 7.74988 10.2422 7.86181 10.2422 7.99988Z",
-  "M10.1172 15.9999H9.99219M10.2422 15.9999C10.2422 16.1379 10.1303 16.2499 9.99219 16.2499C9.85412 16.2499 9.74219 16.1379 9.74219 15.9999C9.74219 15.8618 9.85412 15.7499 9.99219 15.7499C10.1303 15.7499 10.2422 15.8618 10.2422 15.9999Z",
-];
-
+// The two server units from the app icon (src-tauri/icons/make-icon.py), each with a drive slot and vents.
+// Colors come from the --brand-* variables in styles.css.
 export function BrandMark({ size = 17 }: { size?: number }) {
-  const band = { stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round", strokeLinejoin: "round" } as const;
-  const glyph = (props: SVGProps<SVGGElement>) => (
-    <g {...band} {...props}>
-      {BRAND_PATHS.map((d) => (
-        <path key={d} d={d} />
+  const unit = (y: number) => (
+    <g key={y}>
+      <rect x="3.3" y={y + 0.6} width="18" height="7" rx="2" fill="var(--brand-side)" />
+      <rect x="3" y={y} width="18" height="7" rx="2" fill="url(#brand-mark-top)" />
+      <rect x="5.5" y={y + 2.6} width="7.5" height="1.8" rx="0.9" fill="var(--brand-pad)" />
+      {[15.4, 16.5, 17.6, 18.7].map((x) => (
+        <rect key={x} x={x} y={y + 2.3} width="0.5" height="2.4" rx="0.25" fill="var(--brand-pad)" />
       ))}
     </g>
   );
   return (
-    <svg className="brand-mark" width={size} height={size} viewBox="-0.5 -0.5 25 25" fill="none" aria-hidden="true">
+    <svg className="brand-mark" width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id="brand-mark-top" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="24" y2="24">
+        <linearGradient id="brand-mark-top" gradientUnits="userSpaceOnUse" x1="0" y1="4" x2="0" y2="20">
           <stop offset="0" stopColor="var(--brand-top-1)" />
           <stop offset="1" stopColor="var(--brand-top-2)" />
         </linearGradient>
-        <clipPath id="brand-mark-fold">
-          <path d="M24.5 -0.5V24.5H-0.5z" />
-        </clipPath>
       </defs>
-      {glyph({ color: "var(--brand-side)", transform: "translate(0.35 0.7)" })}
-      {glyph({ stroke: "url(#brand-mark-top)" })}
-      {glyph({ color: "var(--brand-fold)", clipPath: "url(#brand-mark-fold)" })}
+      {unit(4)}
+      {unit(13)}
     </svg>
   );
 }
