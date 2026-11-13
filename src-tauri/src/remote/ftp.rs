@@ -5,7 +5,7 @@ use suppaftp::list::File as ListFile;
 use suppaftp::list::PosixPexQuery;
 use suppaftp::tokio::{AsyncNativeTlsConnector, AsyncNativeTlsFtpStream};
 use suppaftp::types::FileType;
-use suppaftp::FtpError;
+use suppaftp::{FtpError, Status};
 
 use super::{pump, ConnectParams, Ctx, Entry, Progress, RemoteSide, CONNECT_TIMEOUT};
 use crate::error::{AppError, AppResult};
@@ -73,6 +73,14 @@ pub async fn connect(p: &ConnectParams, ctx: &Ctx) -> AppResult<FtpConn> {
         err if err.code == "error" => AppError::new("auth", err.message),
         err => err,
     })?;
+
+    // suppaftp only sends PBSZ and PROT for explicit TLS (into_secure). Without
+    // PROT P an implicit server expects clear data connections, and servers that
+    // require encrypted data refuse every listing with "522 Data connections must be encrypted".
+    if p.protocol == Protocol::Ftps {
+        stream.custom_command("PBSZ 0", &[Status::CommandOk]).await?;
+        stream.custom_command("PROT P", &[Status::CommandOk]).await?;
+    }
 
     stream.transfer_type(FileType::Binary).await?;
     stream.set_passive_nat_workaround(true);
